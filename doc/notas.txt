@@ -1,0 +1,7 @@
+la entidad periodo, va a almacenar el perido "semestre-1, semestre-2" y la el año "2020, 20212,..." 
+
+y con un trigger despues de que un estudiante matricule el id de dicha matricula se guarde el Periodo, con el año actual, periodo "semestre-1, semestre-2" y el estado "encurso o cursado"
+
+
+
+en la entidad materia la relacion con sigo misma de requisito, para mayor comodidad y cumplir con la FN1, la relacion se tranforma en una tabla la cual tendra 2 atribustos, id_materia y id_materia_requisito
