@@ -1,6 +1,16 @@
+create table provincia
+(id_provincia number not null,
+nombre varchar2(20) not null,
+constraint id_provincia_pk 
+primary key(id_provincia)
+);
+
 create table estudiante
 (carnet number not null,
 nombre varchar2(20) not null,
+provincia number not null,
+constraint fk_provincia
+foreign key (provincia) references provincia (id),
 constraint carnet_pk
 primary key(carnet)
 );
