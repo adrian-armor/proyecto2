@@ -208,6 +208,7 @@ insert into materia values(6, 2, ' INGLES BASICO',2);
 insert into materia values(7, 2, ' INGLES 1',2);
 insert into materia values(8, 2, ' INGLES 2',2);
 insert into materia values(9, 4, 'ANALISIS DE ALGORITMOS',2);
+insert into materia values(10, 4, 'CALCULO DIFERENCIAL E INTEGRAL',2);
 
 
 insert into profesor values(1, 'Profesor 1',1);
@@ -240,7 +241,11 @@ insert into estudiante_beca values(201700000, 1);
 insert into estudiante_beca values(201700001, 2);
 insert into estudiante_beca values(201700002, 1);
 
-
+insert into requisito_materia values(7,6);
+insert into requisito_materia values(8,6);
+insert into requisito_materia values(9,4);
+insert into requisito_materia values(9,10);
+insert into requisito_materia values(10,1);
 
 
 
