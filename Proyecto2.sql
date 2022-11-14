@@ -3,7 +3,7 @@ set setveroutput on;
 create table provincia
 (id_provincia number not null,
 nombre varchar2(20) not null,
-constraint id_provincia_pk 
+constraint id_provincia_pk
 primary key(id_provincia)
 );
 
@@ -18,33 +18,33 @@ primary key(carnet)
 );
 
 create table beca
-(id_beca number not null, 
+(id_beca number not null,
 monto float,
-nombre_beca varchar2(20), 
+nombre_beca varchar2(20),
 constraint id_beca_pk
 primary key(id_beca)
 );
 
 
 create table aula
-(id_aula number not null, 
+(id_aula number not null,
 nombre_aula varchar2(20) not null,
 constraint id_aula_pk
 primary key(id_aula)
 );
 
 create table horario
-(id_horario number not null, 
-dia varchar2(20), 
-hora_inicio varchar2(20), 
-hora_fin varchar2(20), 
+(id_horario number not null,
+dia varchar2(20),
+hora_inicio varchar2(20),
+hora_fin varchar2(20),
 constraint id_horario_pk
 primary key(id_horario)
 );
 
 create table materia
-(id_materia number not null, 
-creditos number(1), 
+(id_materia number not null,
+creditos number(1),
 nombre_materia varchar2(50) not null,
 constraint id_materia_pk
 primary key(id_materia)
@@ -52,7 +52,7 @@ primary key(id_materia)
 
 create table profesor
 (id_profesor number not null,
-nombre_profesor varchar2(20) not null, 
+nombre_profesor varchar2(20) not null,
 constraint id_profesor_pk
 primary key(id_profesor)
 );
@@ -129,7 +129,7 @@ alter table profesor
  add (id_departamento_profesor number not null)
  add constraint fk_id_departamento_profesor
  foreign key(id_departamento_profesor) references departamento(id_depto);
- 
+
 alter table materia
  add(id_departamento_materia number not null)
  add constraint fk_id_departamento_materia
@@ -254,15 +254,24 @@ insert into requisito_materia values(10,1);
 
 -- 2
 /*
-procedimiento para realiazar una matricula de un estudiante en un grupo especifico. 
-validar que la materia que que quiere matricular ya la curso, esto revisando en peridos si existe 
-una matricula con la misma materia y el mismo estudiante, en caso de no existir mostar consola 
-el mensaje de: por el momento no puede matricular la materia "nombre_materia". 
+procedimiento para realiazar una matricula de un estudiante en un grupo especifico.
+validar que la materia que que quiere matricular ya la curso, esto revisando en peridos si existe
+una matricula con la misma materia y el mismo estudiante, en caso de no existir mostar consola
+el mensaje de: por el momento no puede matricular la materia "nombre_materia".
 En caso de que ya haya cursado la materia, mostrar el mensaje:
 "matricula realizada con exito"
 */
 
 
 -- 3
+/*
+El promedio ponderado se utiliza para asignar la cita de matrícula, este se calcula de la siguiente
+forma:
+• Se multiplica la cantidad de créditos de cada curso por la nota obtenida.
+• Se suman todos los resultados del punto anterior y se divide entre la cantidad total de
+créditos.
 
+        SUM(Nota X Creditos) / Total de créditos = Promedio ponderado
 
+Crear una función que calcule el promedio ponderado (basado en el último período matriculado) para un estudiante dado. Dicha función debe ser invocada por un procedimiento que reciba como parámetro un año e inserte en una tabla temporal la información de todos estudiantes que tengan carné con ese año (carnet, nombre, ponderado). Dicha tabla temporal se consultará después de la ejecución del procedimiento.
+*/
