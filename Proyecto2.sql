@@ -87,9 +87,22 @@ constraint fk_carnet_grupo
 foreign key(carnet_grupo) references estudiante(carnet),
 constraint fk_id_materia_grupo
 foreign key(id_materia_grupo) references materia(id_materia),
-primary key (id_profesor_grupo, id_horario_grupo, id_aula_grupo, carnet_grupo, id_materia_grupo)
+constraint num_grupo_pk
+primary key(num_grupo)
 );
 
+
+create table matricula
+(id_matricula number not null,
+carnet_matricula number not null,
+id_grupo_matriculado number not null,
+nota_estudiante number(3,2) not null,
+constraint fk_carnet_matricula
+foreign key(carnet_matricula) references estudiante(carnet),
+constraint fk_id_grupo_matriculado
+foreign key(id_grupo_matriculado) references grupo(num_grupo),
+primary key (id_matricula, carnet_matricula, id_grupo_matriculado)
+);
 
 --N:N
 create table estudiante_beca
@@ -113,7 +126,15 @@ alter table materia
  add(id_departamento_materia number not null)
  add constraint fk_id_departamento_materia
  foreign key(id_departamento_materia) references departamento(id_depto);
- 
+
+-- trigger
+
+
+
+
+
+
+
 -- 3
 
 
