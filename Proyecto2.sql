@@ -1,3 +1,5 @@
+set severoutput on;
+
 create table provincia
 (id_provincia number not null,
 nombre varchar2(20) not null,
@@ -127,8 +129,24 @@ alter table materia
  add constraint fk_id_departamento_materia
  foreign key(id_departamento_materia) references departamento(id_depto);
 
+
+create table requisito_materia
+(id_materia number not null,
+id_materia_requisito number not null,
+constraint fk_id_materia
+foreign key(id_materia) references materia(id_materia),
+constraint fk_id_materia_requisito
+foreign key(id_materia_requisito) references materia(id_materia),
+primary key(id_materia, id_materia_requisito)
+);
+
 -- trigger
 
+
+
+
+
+-- 2
 
 
 
