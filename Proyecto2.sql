@@ -15,7 +15,7 @@ primary key(id_beca)
 
 create table periodo
 (periodo number, 
-año date,
+aÃ±o varchar2(4),
 estado varchar2(20)
 );
 
