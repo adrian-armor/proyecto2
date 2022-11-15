@@ -1,4 +1,4 @@
-set setveroutput on;
+set serveroutput on;
 
 create table provincia
 (id_provincia number not null,
@@ -136,6 +136,7 @@ alter table materia
  foreign key(id_departamento_materia) references departamento(id_depto);
 
 
+
 create table requisito_materia
 (id_materia number not null,
 id_materia_requisito number not null,
@@ -218,7 +219,13 @@ insert into profesor values(3, 'Profesor 3',3);
 insert into grupo values(1, 1, 1, 1, 1);
 insert into grupo values(2, 2, 2, 2, 2);
 insert into grupo values(3, 3, 3, 3, 3);
-
+insert into grupo values(4, 3, 4, 4, 4);
+insert into grupo values(5, 3, 4, 4, 5);
+insert into grupo values(6, 3, 4, 4, 6);
+insert into grupo values(7, 3, 4, 4, 7);
+insert into grupo values(8, 3, 4, 4, 8);
+insert into grupo values(9, 3, 4, 4, 9);
+insert into grupo values(10, 3, 4, 4, 10);
 
 -- datos de prueba para perido (periodo,carnet_estudiante,id_grupo_matriculado, año, nota_final, estado)
 insert into periodo values(2, 201700001, 1, '2018', 65, 'Reproado');
@@ -235,32 +242,62 @@ insert into periodo values(2, 201700004, 2, '2020', 80, 'Aprobado');
 insert into periodo values(2, 201700005, 2, '2020', 60, 'Reprobado');
 
 insert into periodo values(1, 201700005, 2, '2021', 70, 'Aprobado');
-
+insert into periodo values(1, 201700005, 6, '2021', 90, 'Aprobado');
+insert into periodo values(1, 201700005, 7, '2021', 70, 'Aprobado');
+insert into periodo values(1, 201700005, 8, '2021', 70, 'Aprobado');
+insert into periodo values(1, 201700005, 10, '2021', 70, 'Aprobado');
 
 insert into estudiante_beca values(201700000, 1);
 insert into estudiante_beca values(201700001, 2);
 insert into estudiante_beca values(201700002, 1);
 
 insert into requisito_materia values(7,6);
-insert into requisito_materia values(8,6);
+insert into requisito_materia values(8,7);
 insert into requisito_materia values(9,4);
 insert into requisito_materia values(9,10);
 insert into requisito_materia values(10,1);
 
 
+--2)
+create or replace procedure matricula_estudiante(
+        p_carnet_estudiante in number, 
+        p_id_grupo in number
+        )
+        as
+        v_id_materia number;
+        v_nombre_estudiante varchar(20);
+        v_max_id_matricular number;
+        -- cursor al c_id_materia_requisito de las materias que conincidan con el p_carnet_estudiante en la tabla perido
+        cursor c_id_materia_requisito is
+                select id_materia from requisito_materia re 
+                        where re.id_materia_requisito = (select id_materia from grupo where num_grupo = p_id_grupo) and 
+                            (select id_materia from grupo where num_grupo = p_id_grupo) in ( 
+                                select id_materia_requisito from requisito_materia req 
+                                    where req.id_materia in (
+                                        select id_materia_grupo from grupo gr 
+                                            where gr.num_grupo in (
+                                                select id_grupo_matriculado from periodo per 
+                                                    where per.carnet_estudiante = p_carnet_estudiante and per.estado = 'Aprobado')));
+                begin 
+                select nombre into v_nombre_estudiante from estudiante where carnet = p_carnet_estudiante;
+                OPEN c_id_materia_requisito;
+                LOOP
+                    FETCH c_id_materia_requisito INTO v_id_materia;
+                        IF c_id_materia_requisito%FOUND THEN 
+                            dbms_output.put_line('El estudiante ' || v_nombre_estudiante || 
+                                                 ' no puede matricular el grupo ' || p_id_grupo || 
+                                                 ' porque no cumple con los requisitos necesarios');;
+                            exit;
+                        ELSE
+                            select max(id_matricular) into v_max_id_matricular from matricular;
+                            insert into matricular values(v_max_id_matricular + 1, p_carnet_estudiante, p_id_grupo);
+                            dbms_output.put_line('else');
+                            exit;
+                        END IF;
+                END LOOP;
+                CLOSE c_id_materia_requisito; 
+                end;
 
-
-
-
--- 2
-/*
-procedimiento para realiazar una matricula de un estudiante en un grupo especifico.
-validar que la materia que que quiere matricular ya la curso, esto revisando en peridos si existe
-una matricula con la misma materia y el mismo estudiante, en caso de no existir mostar consola
-el mensaje de: por el momento no puede matricular la materia "nombre_materia".
-En caso de que ya haya cursado la materia, mostrar el mensaje:
-"matricula realizada con exito"
-*/
 
 
 -- 3
