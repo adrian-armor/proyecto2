@@ -304,15 +304,7 @@ créditos.
 
 Crear una función que calcule el promedio ponderado (basado en el último período matriculado) para un estudiante dado. Dicha función debe ser invocada por un procedimiento que reciba como parámetro un año e inserte en una tabla temporal la información de todos estudiantes que tengan carné con ese año (carnet, nombre, ponderado). Dicha tabla temporal se consultará después de la ejecución del procedimiento.
 */
--- 3
-/*
-El promedio ponderado se utiliza para asignar la cita de matrícula, este se calcula de la siguiente forma:
-• Se multiplica la cantidad de créditos de cada curso por la nota obtenida.
-• Se suman todos los resultados del punto anterior y se divide entre la cantidad total de créditos.
 
-        SUM(Nota X Creditos) / Total de créditos = Promedio ponderado
-
-Crear una función que calcule el promedio ponderado (basado en el último período matriculado) para un estudiante dado. Dicha función debe ser invocada por un procedimiento que reciba como parámetro un año e inserte en una tabla temporal la información de todos estudiantes que tengan carné con ese año (carnet, nombre, ponderado). Dicha tabla temporal se consultará después de la ejecución del procedimiento.
 
 CREATE OR REPLACE FUNCTION calcula_ponderado_indv (carnet IN NUMBER)
     RETURN NUMBER IS
