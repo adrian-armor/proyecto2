@@ -97,7 +97,7 @@ create table periodo (
     periodo number(1),
     carnet_estudiante number not null,
     id_grupo_matriculado number not null,
-    año varchar2(4),
+    anno varchar2(4),
     nota_final number(3),
     estado varchar2(20),
     constraint fk_carnet_estudiante_periodo
@@ -220,7 +220,7 @@ insert into grupo values(8, 3, 4, 4, 8);
 insert into grupo values(9, 3, 4, 4, 9);
 insert into grupo values(10, 3, 4, 4, 10);
 
--- datos de prueba para perido (periodo,carnet_estudiante,id_grupo_matriculado, año, nota_final, estado)
+-- datos de prueba para perido (periodo,carnet_estudiante,id_grupo_matriculado, anno, nota_final, estado)
 insert into periodo values(2, 201700001, 1, '2018', 65, 'Reproado');
 
 insert into periodo values(1, 201700002, 2, '2019', 90, 'Aprobado');
@@ -321,7 +321,7 @@ CREATE OR REPLACE FUNCTION calcula_ponderado_indv (carnet IN NUMBER)
     --SELECT creditos from materia WHERE id_materia = v_id_materia;
 
     CURSOR periodos_estd IS
-        SELECT periodo, id_grupo_matriculado, nota_final FROM periodo WHERE carnet_estudiante = carnet ORDER BY año DESC, periodo DESC;
+        SELECT periodo, id_grupo_matriculado, nota_final FROM periodo WHERE carnet_estudiante = carnet ORDER BY  DESC, periodo DESC;
     BEGIN
         OPEN periodos_estd;
         LOOP
