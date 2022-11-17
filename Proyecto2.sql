@@ -248,7 +248,8 @@ insert into requisito_materia values(7,6);
 insert into requisito_materia values(8,7);
 insert into requisito_materia values(9,4);
 insert into requisito_materia values(9,10);
-insert into requisito_materia values(10,1);
+insert into 
+requisito_materia values(10,1);
 */
 
 --2)
@@ -300,7 +301,7 @@ forma:
 • Se suman todos los resultados del punto anterior y se divide entre la cantidad total de
 créditos.
 
-        SUM(Nota X Creditos) / Total de créditos = Promedio ponderado
+        SUM(Nota X Creditos) / Total de creditos = Promedio ponderado
 
 Crear una función que calcule el promedio ponderado (basado en el último período matriculado) para un estudiante dado. Dicha función debe ser invocada por un procedimiento que reciba como parámetro un año e inserte en una tabla temporal la información de todos estudiantes que tengan carné con ese año (carnet, nombre, ponderado). Dicha tabla temporal se consultará después de la ejecución del procedimiento.
 */
@@ -315,23 +316,29 @@ CREATE OR REPLACE FUNCTION calcula_ponderado_indv (carnet IN NUMBER)
     v_periodo NUMBER;
     v_id_grupo NUMBER;
     v_nota_final NUMBER;
+    v_creditos_cur NUMBER;
 
-    v_id_materia NUMBER; -- se usará para extraer el id de la materia y los créditos
-    --SELECT id_materia_grupo from grupo WHERE num_grupo = 8 INTO v_id_materia;
-    --SELECT creditos from materia WHERE id_materia = v_id_materia;
-
-    CURSOR periodos_estd IS
+    CURSOR cur_periodos_estd IS
         SELECT periodo, id_grupo_matriculado, nota_final FROM periodo WHERE carnet_estudiante = carnet ORDER BY  DESC, periodo DESC;
     BEGIN
-        OPEN periodos_estd;
-        LOOP
-            FETCH periodos_estd
-            INTO v_periodo, v_id_grupo, v_nota_final,
+        OPEN cur_periodos_est;
+            FETCH cur_periodos_est INTO v_periodo, v_id_grupo, v_nota_final; --se obtiene la info del �ltimo periodo matr�culado
+        CLOSE cur_periodos_est;
+        
+        FOR reg IN cur_periodos_estd
+            LOOP
+            IF v_periodo == v_periodo THEN
+                v_creditos_cur := obtiene_creditos(reg.id_grupo_matriculado);
+                sumatoria := reg.nota_final*v_creditos_cur;
+                total_creditos := total_creditos + v_creditos_cur;
+            END LOOP;
+    END;
+/
 */
 
 CREATE OR REPLACE FUNCTION obtiene_creditos (n_grupo IN NUMBER)
     RETURN NUMBER IS
-    v_id_materia NUMBER(1); -- se usará para extraer el id de la materia y los créditos
+    v_id_materia NUMBER(1); -- se usara para extraer el id de la materia y los creditos
     v_creditos NUMBER(1);
     BEGIN
     SELECT id_materia_grupo INTO v_id_materia from grupo WHERE num_grupo = n_grupo;
@@ -340,12 +347,12 @@ CREATE OR REPLACE FUNCTION obtiene_creditos (n_grupo IN NUMBER)
 END;
 /
 
--- Prueba de ejecución
+-- Prueba de ejecucion
 SET SERVEROUTPUT ON;
 DECLARE
     creditos NUMBER(1);
 BEGIN
-    creditos:=obtiene_creditos(9); --Análisis de Algoritmos 4 creditos
+    creditos:=obtiene_creditos(9); --Analisis de Algoritmos 4 creditos
     DBMS_OUTPUT.PUT_LINE ('Los créditos del curso solicitado son: ' || creditos);
 END;
 /
