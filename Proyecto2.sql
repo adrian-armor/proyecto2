@@ -11,7 +11,7 @@ create table estudiante
 (carnet number not null,
 nombre varchar2(20) not null,
 provincia number not null,
-año_ingreso varchar2(20) not null,
+anno_ingreso varchar2(20) not null,
 constraint fk_provincia
 foreign key (provincia) references provincia (id_provincia),
 constraint carnet_pk
@@ -103,7 +103,7 @@ create table periodo
 (periodo number(1),
 carnet_estudiante number not null,
 id_grupo_matriculado number not null,
-año varchar2(4),
+anno varchar2(4),
 nota_final number(3),
 estado varchar2(20),
 constraint fk_carnet_estudiante_periodo
@@ -228,7 +228,7 @@ insert into grupo values(8, 3, 4, 4, 8);
 insert into grupo values(9, 3, 4, 4, 9);
 insert into grupo values(10, 3, 4, 4, 10);
 
--- datos de prueba para perido (periodo,carnet_estudiante,id_grupo_matriculado, año, nota_final, estado)
+-- datos de prueba para perido (periodo,carnet_estudiante,id_grupo_matriculado, anno, nota_final, estado)
 insert into periodo values(2, 201700001, 1, '2018', 65, 'Reproado');
 
 insert into periodo values(1, 201700002, 2, '2019', 90, 'Aprobado');
@@ -319,7 +319,7 @@ return total;
 --select promedio_ponderado(201700005) from dual;
 
 --tabla temporal global 
-create global temporary table temp_estudiantes_año
+create global temporary table temp_estudiantes_anno
 (carnet number not null,
 nombre varchar2(20) not null,
 ponderado float not null
@@ -327,16 +327,16 @@ ponderado float not null
 
 -- procedimiento para insertar en tabla temporal
 
-create or replace procedure agregar_estudiante_año (v_año in varchar2)
+create or replace procedure agregar_estudiante_anno (v_anno in varchar2)
 is
 cursor cur_agregar_estudiante is
-select carnet, nombre from estudiante where año_ingreso = v_año;
+select carnet, nombre from estudiante where anno_ingreso = v_anno;
 
 begin
 
 for reg in cur_agregar_estudiante
 loop
-insert into temp_estudiantes_año 
+insert into temp_estudiantes_anno 
 values (reg.carnet, reg.nombre, promedio_ponderado(reg.carnet));
 
 end loop;
@@ -346,9 +346,9 @@ end;
 /
 
 --prueba
-execute agregar_estudiante_año(2017);
+execute agregar_estudiante_anno(2017);
 
-select * from temp_estudiantes_año;
+select * from temp_estudiantes_anno;
 
 /*
 -- eliminar en cascada las tablas y sus datos en onder inverso de como se crearon las tablas
