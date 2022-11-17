@@ -351,12 +351,19 @@ END;
 /
 
 /*
-DROP TABLE profesor CASCADE CONSTRAINTS;
-DROP TABLE departamento CASCADE CONSTRAINTS;
-DROP TABLE grupo CASCADE CONSTRAINTS;
-DROP TABLE matricula CASCADE CONSTRAINTS;
-DROP TABLE periodo CASCADE CONSTRAINTS;
-DROP TABLE estudiante_beca CASCADE CONSTRAINTS;
-DROP TABLE materia CASCADE CONSTRAINTS;
-DROP TABLE requisito_materia CASCADE CONSTRAINTS;
+
+-- eliminar en cascada las tablas y sus datos en onder inverso de como se crearon las tablas
+drop table requisito_materia cascade constraints;
+drop table estudiante_beca cascade constraints;
+drop table periodo cascade constraints;
+drop table matricula cascade constraints;
+drop table grupo cascade constraints;
+drop table departamento cascade constraints;
+drop table profesor cascade constraints;
+drop table materia cascade constraints;
+drop table horario cascade constraints;
+drop table aula cascade constraints;
+drop table beca cascade constraints;
+drop table estudiante cascade constraints;
+drop table provincia cascade constraints;
 */
