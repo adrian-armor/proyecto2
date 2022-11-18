@@ -312,7 +312,10 @@ end;
 --select obtener_creditos(10)  from dual;
 
 -- funcion para el promedio ponderado
-
+/*
+Calcula el ponderado de todos los estudiantes en un año determinado.
+Solo el último periódo matriculado con dos decimales de precisión.
+*/
 create or replace function promedio_ponderado(n_carnet number)
  return number is
  total_creditos number;
@@ -394,7 +397,7 @@ end;
 --prueba
 select * from periodo;
 
-execute agregar_estudiante_anno(2018);
+execute agregar_estudiante_anno(2017);
 drop table temp_estudiante;
 select * from temp_estudiantes_anno;
 
