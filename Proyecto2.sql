@@ -950,6 +950,7 @@ BEGIN
 END;
 /
 
+
 -- Procedimiento para matricular en un grupo
 CREATE OR REPLACE PROCEDURE matricular_estudiante (
     n_carnet NUMBER,
@@ -1109,21 +1110,9 @@ BEGIN
 END;
 /
 
--- Prueba
-SELECT
-    *
-FROM
-    periodo;
-
-execute agregar_estudiante_anno(2017);
-
-SELECT
-    *
-FROM
-    temp_estudiantes_anno;
+EXECUTE matricular_estudiante(201700003, 3);
 
 
-/*
 -- eliminar en cascada las tablas y sus datos en onder inverso de como se crearon las tablas
 drop table requisito_materia cascade constraints;
 drop table estudiante_beca cascade constraints;
@@ -1138,4 +1127,3 @@ drop table aula cascade constraints;
 drop table beca cascade constraints;
 drop table estudiante cascade constraints;
 drop table provincia cascade constraints;
-*/
