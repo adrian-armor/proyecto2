@@ -154,12 +154,20 @@ insert into provincia values(2, 'San Jose');
 insert into provincia values(3, 'Alajuela');
 insert into provincia values(4, 'Cartago');
 
+--- 2017
 insert into estudiante values(201700000, 'Juan Perez', 1, '2017' );
 insert into estudiante values(201700001, 'Maria Lopez', 2,'2017' );
 insert into estudiante values(201700002, 'Pedro Sanchez', 3, '2017');
 insert into estudiante values(201700003, 'Jose Jimenez', 4, '2017');
 insert into estudiante values(201700004, 'Manuel Mora', 4, '2017');
 insert into estudiante values(201700005, 'Ignacio Mendez', 2, '2017');
+--- 2018
+insert into estudiante values(201800001, 'Andres Soto', 2, '2018');
+insert into estudiante values(201800002, 'Andrea Arias', 2, '2018');
+insert into estudiante values(201800003, 'Carlos Suarez', 2, '2018');
+insert into estudiante values(201800004, 'Nancy Oramas', 2, '2018');
+
+select * from estudiante;
 
 insert into beca values(1, 1000, 'Beca 1');
 insert into beca values(2, 2000, 'Beca 2');
@@ -200,7 +208,7 @@ insert into departamento values(2, 'Departamento 2');
 insert into departamento values(3, 'Departamento 3');
 insert into departamento values(4, 'Departamento 4');
 
-
+-- ID, creditos, nombre
 insert into materia values(1, 2, 'MATEMATICA GENERAL',1);
 insert into materia values(2, 3, 'FUNDAMENTOS DE ORGANIZACION DE COMPUTADORAS',2);
 insert into materia values(3, 4, 'ESTRUCTURAS DE DATOS',2);
@@ -229,6 +237,7 @@ insert into grupo values(9, 3, 4, 4, 9);
 insert into grupo values(10, 3, 4, 4, 10);
 
 -- datos de prueba para perido (periodo,carnet_estudiante,id_grupo_matriculado, anno, nota_final, estado)
+-- Estudiantes carnet 2017
 insert into periodo values(2, 201700001, 1, '2018', 65, 'Reproado');
 
 insert into periodo values(1, 201700002, 2, '2019', 90, 'Aprobado');
@@ -248,6 +257,23 @@ insert into periodo values(1, 201700005, 7, '2021', 70, 'Aprobado');
 insert into periodo values(1, 201700005, 8, '2021', 70, 'Aprobado');
 insert into periodo values(1, 201700005, 10, '2021', 70, 'Aprobado');
 
+-- Estudiantes carnet 2018
+-- Andrea Arias
+insert into periodo values(1, 201800002, 2, '2022', 75, 'Aprobado');
+insert into periodo values(2, 201800002, 6, '2021', 90, 'Aprobado');
+insert into periodo values(2, 201800002, 7, '2022', 80, 'Aprobado');
+insert into periodo values(1, 201800002, 8, '2021', 85, 'Aprobado');
+insert into periodo values(2, 201800002, 10, '2022', 90, 'Aprobado');
+
+-- Carlos Suarez
+insert into periodo values(1, 201800003, 2, '2021', 70, 'Aprobado');
+insert into periodo values(2, 201800003, 6, '2022', 80, 'Aprobado');
+insert into periodo values(1, 201800003, 7, '2021', 95, 'Aprobado');
+insert into periodo values(1, 201800003, 8, '2022', 70, 'Aprobado');
+insert into periodo values(2, 201800003, 10, '2021', 75, 'Aprobado');
+
+
+
 insert into estudiante_beca values(201700000, 1);
 insert into estudiante_beca values(201700001, 2);
 insert into estudiante_beca values(201700002, 1);
@@ -258,11 +284,15 @@ insert into requisito_materia values(9,4);
 insert into requisito_materia values(9,10);
 insert into requisito_materia values(10,1);
 
+-- PARTE 2
+/*
+Procedimiento almacenado para realizar la matr铆cula de un de un estudiante en un grupo espec铆fico. En este procedimiento es donde se debe hacer la validaci贸n de los requisitos. En caso de que el estudiante no cumpla los requisitos de la materia que desea matr铆cula entonces se debe mostrar un mensaje significativo en donde se indique cu谩l es el requisito que tiene pendiente. Para la implementaci贸n de esta validaci贸n puede usar cualquiera de los elementos vistos en clase.
+*/
 
 
 --PARTE 3
 
---- funci贸n para calcular los creditos por grupo
+--- funcion para calcular los creditos por grupo
 
 create or replace function obtener_creditos( n_grupo number)
 return number is
@@ -284,41 +314,55 @@ end;
 -- funcion para el promedio ponderado
 
 create or replace function promedio_ponderado(n_carnet number)
- return number is 
+ return number is
  total_creditos number;
  sumatoria number;
- total number ;
+ ponderado number(4,2);
  creditos number;
- 
+ ultimo_anno NUMBER(4);
+ ultimo_periodo NUMBER(4);
+ id_grupo NUMBER;
+ nota NUMBER;
 
-cursor cur_est is
- select id_grupo_matriculado, nota_final, periodo
- from periodo where carnet_estudiante = n_carnet ;
+CURSOR cur_periodos_estd IS
+     SELECT periodo, id_grupo_matriculado, nota_final, anno FROM periodo WHERE carnet_estudiante = n_carnet ORDER BY anno DESC, periodo DESC;
 
 begin
 total_creditos := 0;
 sumatoria := 0;
-for reg in cur_est
+
+-- se cargan datos de muestreo para obtener el ultimo periodo matriculado por el estudiante.
+open cur_periodos_estd;
+    fetch cur_periodos_estd 
+        into ultimo_periodo, id_grupo, nota, ultimo_anno;
+close cur_periodos_estd;
+
+for reg in cur_periodos_estd
 loop
-creditos := obtener_creditos(reg.id_grupo_matriculado);
-total_creditos := total_creditos + creditos;
-sumatoria := (reg.nota_final * creditos) + sumatoria;
+    if reg.anno = ultimo_anno AND reg.periodo = ultimo_periodo THEN -- se comprueba que se este avaluando el mismo periodo
+        creditos := obtener_creditos(reg.id_grupo_matriculado);
+        total_creditos := total_creditos + creditos;
+        sumatoria := (reg.nota_final * creditos) + sumatoria;
+    else
+        EXIT;
+    end if;
+    ultimo_anno := reg.anno;
+    ultimo_periodo := reg.periodo;
 end loop;
 
 if total_creditos = 0 then total_creditos := 1;
 
 end if;
-total := sumatoria / total_creditos;
+ponderado := sumatoria / total_creditos;
 
-return total;
+return ponderado;
 
- end;
- /
-
+end;
+/
 
 --select promedio_ponderado(201700005) from dual;
 
---tabla temporal global 
+--tabla temporal global
 create global temporary table temp_estudiantes_anno
 (carnet number not null,
 nombre varchar2(20) not null,
@@ -326,7 +370,10 @@ ponderado float not null
 );
 
 -- procedimiento para insertar en tabla temporal
-
+/*
+Calcula el ponderado de todos los estudiantes en un a駉 determinado.
+Solo el 鷏timo peri骴o matriculado con dos decimales de precisi髇.
+*/
 create or replace procedure agregar_estudiante_anno (v_anno in varchar2)
 is
 cursor cur_agregar_estudiante is
@@ -336,19 +383,24 @@ begin
 
 for reg in cur_agregar_estudiante
 loop
-insert into temp_estudiantes_anno 
+insert into temp_estudiantes_anno
 values (reg.carnet, reg.nombre, promedio_ponderado(reg.carnet));
 
 end loop;
-
 
 end;
 /
 
 --prueba
-execute agregar_estudiante_anno(2017);
+select * from periodo;
 
+execute agregar_estudiante_anno(2018);
+drop table temp_estudiante;
 select * from temp_estudiantes_anno;
+
+-- SELECTS de prueba, eliminar antes de entregar
+SELECT periodo, id_grupo_matriculado, nota_final, anno FROM periodo WHERE carnet_estudiante = 201800003 ORDER BY anno DESC, periodo DESC; --OK
+select * from periodo;
 
 /*
 -- eliminar en cascada las tablas y sus datos en onder inverso de como se crearon las tablas
