@@ -875,11 +875,11 @@ BEGIN
         requisito_materia
     WHERE
         id_materia = n_id_materia;
-
+    RETURN id_requisito;
 EXCEPTION
     WHEN no_data_found THEN
         id_requisito := 0;
-        RETURN id_requisito;
+    RETURN id_requisito;
 END;
 /
 
@@ -1110,9 +1110,6 @@ BEGIN
 END;
 /
 
-EXECUTE matricular_estudiante(201700003, 3);
-
-
 -- eliminar en cascada las tablas y sus datos en onder inverso de como se crearon las tablas
 drop table requisito_materia cascade constraints;
 drop table estudiante_beca cascade constraints;
@@ -1127,3 +1124,4 @@ drop table aula cascade constraints;
 drop table beca cascade constraints;
 drop table estudiante cascade constraints;
 drop table provincia cascade constraints;
+drop table temp_estudiantes_anno cascade constraints;
